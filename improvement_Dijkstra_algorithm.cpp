@@ -73,21 +73,24 @@ void buildGraph(vector<vector<int>> edges, vector<vector<int>>& A) {
 void improvDijkstra(vector<vector<int>>& edges, int n) {
 	vector<vector<int>> A(n + 1, vector<int>(n + 1, INF));
 	buildGraph(edges, A);
-	int st = 0;
+	/* temp arg : st */
+	int st = 1;
 	vector<int> S;		//S{idx};
 	vector<int> D(n + 1, INF);
 
 	S.push_back(st);
-	D[0] = 0;
+	D[st] = 0;
 	map<int, set<int>> P;	// P[now]{best fathers};
-	P[0].insert(-1);
+	P[st].insert(-1);
 
 	set<tiii> expandCost_Node_Father;	// eCF{cost, next, father};
-	int nownodeidx = 0;
-	while (S.size() < n + 1) {
-		for (int i = 0; i < n + 1; ++i) {
+	//int nownodeidx = 0;	// S.back() 
+	while (S.size() < n) {
+		int nownode = S.back();
+		for (int i = 1; i < n + 1; ++i) {
 			if (count(S.begin(), S.end(), i)); //expandCost_Node_Father.insert({ INF, i, S[nownodeidx]});
-			else expandCost_Node_Father.insert({ D[S[nownodeidx]] + A[S[nownodeidx]][i], i, S[nownodeidx]});
+			//else expandCost_Node_Father.insert({ D[S[nownodeidx]] + A[S[nownodeidx]][i], i, S[nownodeidx]});
+			else expandCost_Node_Father.insert({ D[nownode] + A[nownode][i], i, nownode });
 		}
 		for (auto &it : expandCost_Node_Father) {
 			int cost = get<0>(it), next = get<1>(it), father = get<2>(it);
@@ -103,16 +106,17 @@ void improvDijkstra(vector<vector<int>>& edges, int n) {
 
 		int nj = get<1>(*expandCost_Node_Father.begin());
 		expandCost_Node_Father.erase(expandCost_Node_Father.cbegin());
-		S.push_back(nj);
-		nownodeidx++;
+		if (!count(S.begin(), S.end(), nj)) S.push_back(nj);
+		//nownodeidx++;
 	}
 
-
-	cout << D[n] << endl;
+	/* temp arg target */
+	int tar = 6;
+	cout << D[tar] << endl;
 	/* DFS for the best routes*/
 	vector<int> path;
 	function<void(int)> dfs = [&](int now) {
-		if (now == 0) {
+		if (now == st) {
 			for (int x : path) cout << x << "<-";
 			cout << now <<  endl;
 			return;
@@ -123,18 +127,18 @@ void improvDijkstra(vector<vector<int>>& edges, int n) {
 		}
 		path.pop_back();
 	};
-	dfs(n);
+	dfs(tar);
 }
-
-
 
 int main() {
 	// start : 0, end : 4
-	int n = 4;
+	int n = 8;
 	// {{0, 1, 3}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
-	// vector<vector<int>> e{ {0, 1, 3}, {0, 2, 1}, {1, 3, 1}, {2, 4, 200}, {2, 3, 1}, {1, 4, 2}, {3, 4, 100} };
-	vector<vector<int>> e{{0, 1, 2}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
+	 //vector<vector<int>> e{ {0, 1, 3}, {0, 2, 1}, {1, 3, 1}, {2, 4, 200}, {2, 3, 1}, {1, 4, 2}, {3, 4, 3} };
+	//vector<vector<int>> e{ {0, 1, 2}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
 	//Dijkstra(e, n);
+	vector<vector<int>> e{ {1, 2, 20}, {1, 3, 30}, {1, 4, 20}, {2, 3, 20}, {2, 5, 30}, {3, 4, 10}, {3, 6, 40},
+		{4, 7, 30}, {5, 6, 10}, {5, 8, 20}, {6, 7, 10}, {6, 8, 20}, {7, 8, 50}};
 	improvDijkstra(e, n);
 	return 0;
 }
