@@ -87,7 +87,7 @@ void improvDijkstra(vector<vector<int>>& edges, int n) {
 	while (S.size() < n + 1) {
 		for (int i = 0; i < n + 1; ++i) {
 			if (count(S.begin(), S.end(), i)); //expandCost_Node_Father.insert({ INF, i, S[nownodeidx]});
-			else expandCost_Node_Father.insert({ D[nownodeidx] + A[S[nownodeidx]][i], i, S[nownodeidx]});
+			else expandCost_Node_Father.insert({ D[S[nownodeidx]] + A[S[nownodeidx]][i], i, S[nownodeidx]});
 		}
 		for (auto &it : expandCost_Node_Father) {
 			int cost = get<0>(it), next = get<1>(it), father = get<2>(it);
@@ -117,12 +117,11 @@ void improvDijkstra(vector<vector<int>>& edges, int n) {
 			cout << now <<  endl;
 			return;
 		}
+		path.push_back(now);
 		for (int fa : P[now]) {
-			path.push_back(now);
 			dfs(fa);
-			path.pop_back();
 		}
-		
+		path.pop_back();
 	};
 	dfs(n);
 }
@@ -132,7 +131,9 @@ void improvDijkstra(vector<vector<int>>& edges, int n) {
 int main() {
 	// start : 0, end : 4
 	int n = 4;
-	vector<vector<int>> e{ {0, 1, 2}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
+	// {{0, 1, 3}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
+	// vector<vector<int>> e{ {0, 1, 3}, {0, 2, 1}, {1, 3, 1}, {2, 4, 200}, {2, 3, 1}, {1, 4, 2}, {3, 4, 100} };
+	vector<vector<int>> e{{0, 1, 2}, {0, 2, 2}, {1, 3, 1}, {2, 4, 2}, {2, 3, 1}, {1, 4, 2}, {3, 4, 1} };
 	//Dijkstra(e, n);
 	improvDijkstra(e, n);
 	return 0;
